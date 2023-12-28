@@ -1,16 +1,45 @@
 import mongoose from "mongoose";
 import User from "../models/User.js";
+import bcrypt from "bcrypt"
+import { createError } from "../error.js";
+import jwt from "jsonwebtoken";
 
-export const sigup = async (req, res) => {
+export const signup = async (req, res, next) => {
+
     try {
-        const newUser = new User
+        const saltRounds = 10;
+        const salt = bcrypt.genSaltSync(saltRounds);
+        const hash = bcrypt.hashSync(req.body.password, salt);
+        const newUser = new User({ ...req.body, password: hash});
+
+        await newUser.save();
+        res.status(200).send("User has been created!");
+
     } catch (err) {
-        //todo
+        next(createError(404,"Invalid or duplicated user info!"))
     }
 };
 
-export const signin = (req, res) => {
-    console.log('working');
+export const signin = async (req, res, next) => {
+    try {
+        const user = await User.findOne({name:req.body.name});      //searching for user in db
+        if(!user) return next(createError(404, "User was not found!"));     //handler if user not found
+
+        const isCorrect = await bcrypt.compare(req.body.password, user.password)       // comapring hashed password
+        if(!isCorrect) return next(createError(400, "Wrong credentials!")); ////handler for wrong pass
+
+        const token = jwt.sign({id: user._id}, process.env.JWT);
+        const {password, ...others} = user._doc;
+        res
+        .cookie("access_token", token, {
+            httpOnly:true
+        })
+        .status(200)
+        .json(others)
+
+    } catch (err) {
+        next(err)
+    }
 };
 
 export const google = (req, res) => {
