@@ -1,8 +1,28 @@
 import express from "express";
-import { test } from "../controlers/user.js";
+import * as userService from "../controlers/user.js";
+import { verifyToken } from "../verifyToken.js";
 
 const router = express.Router();
+//update user
+router.put("/:id", verifyToken, userService.update);
 
-router.get("/test", test);
+//delete user
+router.delete("/:id", userService.remove);
+
+//get a user
+router.get("/find/:id", userService.getUser);
+
+//subscribe a user
+router.put("/sub/:id", userService.subscribe);
+
+//unsubscribe a user
+router.put("/unsub/:id", userService.unsubscribe);
+
+//like a video
+router.put("/like/:videoId", userService.like);
+
+//dislike a video
+router.put("/dislike/:videoId", userService.dislike);
+
 
 export default router;
