@@ -1,5 +1,5 @@
 import express from "express";
-import { addComment, deleteComment, getComments } from "../controlers/comment.js";
+import { addComment, deleteComment, getComments } from "../controlers/commentController.js";
 import { verifyToken } from "../verifyToken.js";
 
 const router = express.Router();
