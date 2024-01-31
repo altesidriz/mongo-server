@@ -13,7 +13,7 @@ const app = express();
 dotenv.config()
 
 const connect = () => {
-    mongoose.connect(process.env.MONGO).then(() => {
+    mongoose.connect(process.env.MONGO_PLAY).then(() => {
         console.log("connected to db")
     }).catch((err) => {
         throw err;
