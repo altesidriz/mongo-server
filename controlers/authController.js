@@ -78,16 +78,21 @@ export const signin = async (req, res, next) => {
     }
 };
 
-export const logout = (req, res) => {
-    // Clear the access_token cookie
-    res
-        .clearCookie("access_token", {
-            sameSite: "Lax", // Ensure these match what you set on signin/signup
-            secure: process.env.NODE_ENV === 'production', // Use secure in production
-        })
-        .status(200)
-        .json("User has been logged out."); // Send a success message
-};
+// export const logout = (req, res) => {
+//     // Clear the access_token cookie
+//     res
+//         .clearCookie("access_token", {
+//             sameSite: "Lax", 
+//             secure: process.env.NODE_ENV === 'production',
+//         })
+//         .status(200)
+//         .json("User has been logged out."); 
+// };
+
+export const logout = async (req, res, next) => {
+    res.clearCookie("access_token");
+    res.status(200).json("Loged out successfully!")
+}
 
 // Keeping googleAuth as is, since you asked to ignore it for this change.
 export const googleAuth = async (req, res, next) => {
